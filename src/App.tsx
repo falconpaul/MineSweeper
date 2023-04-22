@@ -84,7 +84,7 @@ const App: React.FC<Props> = ({
             onMouseLeave={smileMouseLeave}
             onMouseEnter={smileMouseEnter}
             onMouseUp={smileMouseUp}
-          /> 
+          />
           <div className="timer">
             <div className={'digit digit-' + timerSecondsStr[0]} />
             <div className={'digit digit-' + timerSecondsStr[1]} />

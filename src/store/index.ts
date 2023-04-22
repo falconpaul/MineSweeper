@@ -1,13 +1,13 @@
-import { configureStore } from "@reduxjs/toolkit"
-import field from "./field/field"
+import { configureStore } from "@reduxjs/toolkit";
+import field from "./field/field";
 
 const store = configureStore({
-    reducer: {
-        field
-    }
-})
+  reducer: {
+    field,
+  },
+});
 
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
-export default store
+export default store;
