@@ -14,6 +14,7 @@ body {
 }
 
 .panel {
+    zoom: 170%;
     user-select: none;
     padding: 5px 5px;
     background-color: $colorPrimary;
@@ -98,4 +99,32 @@ body {
             }
         }
     }
+}
+
+.beginner {
+    position: fixed;
+    left: 50px;
+    top: 100px;
+    font-size: 50px;
+}
+
+.intermediate {
+    position: fixed;
+    left: 50px;
+    top: 200px;
+    font-size: 50px;
+}
+
+.expert {
+    position: fixed;
+    left: 50px;
+    top: 300px;
+    font-size: 50px;
+}
+
+.hell {
+    position: fixed;
+    left: 50px;
+    top: 400px;
+    font-size: 50px;
 }

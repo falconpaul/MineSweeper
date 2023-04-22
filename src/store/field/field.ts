@@ -1,10 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "..";
 
-const width = 16;
-const height = 16;
-const minesCount = 40;
-
 export type CellType =
   | "unknown"
   | "flag"
@@ -30,6 +26,12 @@ export enum SmileType {
   win,
   lose,
 }
+
+export type Difficulty = {
+  width: number;
+  height: number;
+  minesCount: number;
+};
 
 const genFrontMatrix = (
   width: number,
@@ -110,9 +112,9 @@ const openFieldCell = (state: FieldState, y: number, x: number) => {
       const ax = x + dx;
       if (
         ay >= 0 &&
-        ay < height &&
+        ay < state.difficulty.height &&
         ax >= 0 &&
-        ax < width &&
+        ax < state.difficulty.width &&
         ["unknown", "qm"].includes(state.frontField[ay][ax])
       ) {
         openFieldCell(state, ay, ax);
@@ -128,23 +130,31 @@ interface FieldState {
   isSmileClicked: boolean;
   isLost: boolean;
   isWin: boolean;
-  minesCount: number;
   timerStartedAt: number;
   currentTime: number;
   closedCellCount: number;
+  difficulty: {
+    width: number;
+    height: number;
+    minesCount: number;
+  };
 }
 
 const initialState: FieldState = {
   smileType: SmileType.default,
   isSmileClicked: false,
-  frontField: genFrontMatrix(width, height),
+  frontField: genFrontMatrix(16, 16),
   backField: [],
   isLost: false,
   isWin: false,
-  minesCount,
   timerStartedAt: 0,
   currentTime: 0,
-  closedCellCount: width * height,
+  closedCellCount: 8 * 8,
+  difficulty: {
+    width: 16,
+    height: 16,
+    minesCount: 40,
+  },
 };
 
 const fieldSlice = createSlice({
@@ -173,31 +183,36 @@ const fieldSlice = createSlice({
     },
     onSmileClick: (state) => {
       if (state.isSmileClicked) {
-        state.frontField = genFrontMatrix(width, height);
+        state.frontField = genFrontMatrix(
+          state.difficulty.width,
+          state.difficulty.height
+        );
         state.backField = [];
         state.isLost = false;
         state.isWin = false;
         state.smileType = SmileType.default;
-        state.minesCount = minesCount;
+        state.difficulty.minesCount = state.difficulty.minesCount;
         state.timerStartedAt = 0;
         state.currentTime = 0;
       }
     },
     markCell: (state, action: PayloadAction<number[]>) => {
+      let { minesCount } = state.difficulty;
       if (state.isLost) return;
       const [y, x] = action.payload;
       const row = state.frontField[y];
-      if (row[x] === "unknown" && state.minesCount > 0) {
+      if (row[x] === "unknown" && minesCount > 0) {
         row[x] = "flag";
-        state.minesCount--;
+        minesCount--;
       } else if (row[x] === "flag") {
         row[x] = "qm";
-        state.minesCount++;
+        minesCount++;
       } else if (row[x] === "qm") {
         row[x] = "unknown";
       }
     },
     openCell: (state, action: PayloadAction<number[]>) => {
+      const { width, height, minesCount } = state.difficulty;
       if (state.isLost || state.isWin) return;
       const [y, x] = action.payload;
       if (state.frontField[y][x] === "flag") return;
@@ -231,6 +246,20 @@ const fieldSlice = createSlice({
     updateTimer: (state) => {
       state.currentTime = +new Date();
     },
+    changeDifficulty: (state, action: PayloadAction<Difficulty>) => {
+      state.difficulty = action.payload
+      state.frontField = genFrontMatrix(
+        action.payload.width,
+        action.payload.height
+      );
+      state.backField = [];
+      state.isLost = false;
+      state.isWin = false;
+      state.smileType = SmileType.default;
+      state.difficulty.minesCount = action.payload.minesCount;
+      state.timerStartedAt = 0;
+      state.currentTime = 0;
+    },
   },
 });
 
@@ -247,7 +276,8 @@ export const selectTimerStarted = (state: RootState) =>
 export const selectIsGameOver = (state: RootState) =>
   state.field.isLost || state.field.isWin;
 
-export const selectMinesCount = (state: RootState) => state.field.minesCount;
+export const selectMinesCount = (state: RootState) =>
+  state.field.difficulty.minesCount;
 
 export const selectTimerSeconds = (state: RootState) =>
   Math.floor((state.field.currentTime - state.field.timerStartedAt) / 1000);
@@ -259,6 +289,7 @@ export const {
   openCell,
   markCell,
   updateTimer,
+  changeDifficulty,
 } = fieldSlice.actions;
 
 export default fieldSlice.reducer;

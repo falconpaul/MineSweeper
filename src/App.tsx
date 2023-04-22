@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { connect, ConnectedProps } from 'react-redux'
 import './assets/styles/global.scss'
 import { AppDispatch, RootState } from './store'
-import { selectIsSmileClicked, selectSmileType, setIsSmileClicked, setSmileType, SmileType, CellType, openCell, selectFrontField, onSmileClick, markCell, selectMinesCount, updateTimer, selectTimerSeconds, selectTimerStarted, selectIsGameOver } from './store/field/field'
+import { selectIsSmileClicked, selectSmileType, setIsSmileClicked, setSmileType, SmileType, CellType, openCell, selectFrontField, onSmileClick, markCell, selectMinesCount, updateTimer, selectTimerSeconds, selectTimerStarted, selectIsGameOver, Difficulty, changeDifficulty } from './store/field/field'
 
 const App: React.FC<Props> = ({
   smileType,
@@ -17,7 +17,8 @@ const App: React.FC<Props> = ({
   onSmileClick,
   openCell,
   markCell,
-  updateTimer
+  updateTimer,
+  changeDifficulty
 }) => {
   useEffect(() => {
     if (timerStarted && !isGameOver) {
@@ -105,6 +106,10 @@ const App: React.FC<Props> = ({
           ))}
         </div>
       </div>
+      <button className='beginner' onClick={() => changeDifficulty({width: 8, height: 8, minesCount: 10})}>Beginner</button>
+      <button className='intermediate' onClick={() => changeDifficulty({width: 16, height: 16, minesCount: 40})}>Intermediate</button>
+      <button className='expert' onClick={() => changeDifficulty({width: 30, height: 16, minesCount: 99})}>Expert</button>
+      <button className='hell' onClick={() => changeDifficulty({width: 30, height: 30, minesCount: 200})}>Hell</button>
     </>
   )
 }
@@ -128,7 +133,8 @@ const mapDispatch = (dispatch: AppDispatch) => {
     onSmileClick: () => dispatch(onSmileClick()),
     openCell: (value: number[]) => dispatch(openCell(value)),
     markCell: (value: number[]) => dispatch(markCell(value)),
-    updateTimer: () => dispatch(updateTimer())
+    updateTimer: () => dispatch(updateTimer()),
+    changeDifficulty: (value: Difficulty) => dispatch(changeDifficulty(value))
   }
 }
 
