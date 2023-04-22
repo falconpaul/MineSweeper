@@ -1,0 +1,85 @@
+@use 'sass:list';
+
+$colorPrimary: #BFBFBF;
+
+* {
+    box-sizing: border-box;
+    position: relative;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    background-color: #d8d6d6;
+}
+
+.panel {
+    user-select: none;
+    padding: 5px 5px;
+    background-color: $colorPrimary;
+    border: 3px solid;
+    border-color: white #949292 #757474 white;
+    display: inline-block;
+
+    .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: $colorPrimary;
+        border: 3px solid;
+        border-color: #949292 white white #757474;
+        padding: 3px;
+
+        .mines, .timer {
+            display: flex;
+            border: 1px solid;
+            border-color: #949292 white white #757474;
+        }
+
+        .smile {
+            width: 26px;
+            height: 26px;
+            background: url(/src/assets/img/minesweeper-sprites.png) no-repeat;
+            @for $i from 0 through 4 {
+                &.smile-#{$i} {
+                    background-position: (-$i * 27px) -24px;
+                }
+            }   
+        }
+
+        .digit {
+            height: 23px;
+            width: 13px;
+            background: url(/src/assets/img/minesweeper-sprites.png) no-repeat;
+            @for $i from 1 through 10 {
+                &.digit-#{$i % 10} {
+                    background-position: (-$i * 14px + 14px) 0;
+                }
+            }
+        }
+    }
+    .field {
+        background-color: $colorPrimary;
+        border: 3px solid;
+        border-color: #949292 white white #757474;
+        .row {
+            display: flex;
+        }
+        .cell {
+            width: 16px;
+            height: 16px;
+            background: url(/src/assets/img/minesweeper-sprites.png) no-repeat;
+    
+            $cellsTop: 'unknown', '0', 'flag', 'qm', 'qma', 'mine', 'bang', 'wrong';
+            @for $i from 0 through 7 {
+                $name: list.nth($cellsTop, $i + 1);
+                &.cell-#{$name} {
+                    background-position: (-$i * 17px) -51px;
+                }
+                &.cell-#{$i + 1} {
+                    background-position: (-$i * 17px) -68px;
+                }
+            }    
+        }
+    }
+}
