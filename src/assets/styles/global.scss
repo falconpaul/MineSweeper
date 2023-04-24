@@ -11,10 +11,12 @@ body {
     display: flex;
     justify-content: center;
     background-color: #d8d6d6;
+    min-width: 1660px;
 }
 
 .panel {
-    zoom: 170%;
+    transform-origin: top center;
+    transform: scale(1.7);
     user-select: none;
     padding: 5px 5px;
     background-color: $colorPrimary;
