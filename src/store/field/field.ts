@@ -150,7 +150,7 @@ const initialState: FieldState = {
   isWin: false,
   timerStartedAt: 0,
   currentTime: 0,
-  closedCellCount: 8 * 8,
+  closedCellCount: 256,
   minesCountOrigin: 40,
   difficulty: {
     width: 16,
@@ -261,6 +261,7 @@ const fieldSlice = createSlice({
       state.difficulty.minesCount = action.payload.minesCount;
       state.timerStartedAt = 0;
       state.currentTime = 0;
+      state.closedCellCount = action.payload.width * action.payload.height
     },
   },
 });
