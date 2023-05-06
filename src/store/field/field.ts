@@ -197,16 +197,15 @@ const fieldSlice = createSlice({
       }
     },
     markCell: (state, action: PayloadAction<number[]>) => {
-      let { minesCount } = state.difficulty;
       if (state.isLost) return;
       const [y, x] = action.payload;
       const row = state.frontField[y];
-      if (row[x] === "unknown" && minesCount > 0) {
+      if (row[x] === "unknown" && state.difficulty.minesCount > 0) {
+        state.difficulty.minesCount--
         row[x] = "flag";
-        minesCount--;
       } else if (row[x] === "flag") {
         row[x] = "qm";
-        minesCount++;
+        state.difficulty.minesCount++
       } else if (row[x] === "qm") {
         row[x] = "unknown";
       }
