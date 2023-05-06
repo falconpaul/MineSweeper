@@ -133,6 +133,7 @@ interface FieldState {
   timerStartedAt: number;
   currentTime: number;
   closedCellCount: number;
+  minesCountOrigin: number;
   difficulty: {
     width: number;
     height: number;
@@ -150,6 +151,7 @@ const initialState: FieldState = {
   timerStartedAt: 0,
   currentTime: 0,
   closedCellCount: 8 * 8,
+  minesCountOrigin: 40,
   difficulty: {
     width: 16,
     height: 16,
@@ -191,7 +193,7 @@ const fieldSlice = createSlice({
         state.isLost = false;
         state.isWin = false;
         state.smileType = SmileType.default;
-        state.difficulty.minesCount = state.difficulty.minesCount;
+        state.difficulty.minesCount = state.minesCountOrigin;
         state.timerStartedAt = 0;
         state.currentTime = 0;
       }
@@ -251,6 +253,7 @@ const fieldSlice = createSlice({
         action.payload.width,
         action.payload.height
       );
+      state.minesCountOrigin = action.payload.minesCount
       state.backField = [];
       state.isLost = false;
       state.isWin = false;
