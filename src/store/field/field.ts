@@ -103,7 +103,8 @@ const genBackMatrix = (
 };
 
 const openFieldCell = (state: FieldState, y: number, x: number) => {
-  if (!["unknown", "qm"].includes(state.frontField[y][x])) return;
+  if (!["unknown", "qm", "flag"].includes(state.frontField[y][x])) return;
+  if (state.frontField[y][x] === 'flag') state.difficulty.minesCount++
   state.frontField[y][x] = state.backField[y][x];
   state.closedCellCount--;
   if (state.backField[y][x] === "0") {
@@ -115,7 +116,7 @@ const openFieldCell = (state: FieldState, y: number, x: number) => {
         ay < state.difficulty.height &&
         ax >= 0 &&
         ax < state.difficulty.width &&
-        ["unknown", "qm"].includes(state.frontField[ay][ax])
+        ["unknown", "qm", "flag"].includes(state.frontField[ay][ax])
       ) {
         openFieldCell(state, ay, ax);
       }
@@ -213,12 +214,12 @@ const fieldSlice = createSlice({
       }
     },
     openCell: (state, action: PayloadAction<number[]>) => {
-      const { width, height, minesCount } = state.difficulty;
+      const { width, height } = state.difficulty;
       if (state.isLost || state.isWin) return;
       const [y, x] = action.payload;
       if (state.frontField[y][x] === "flag") return;
       if (state.backField.length === 0) {
-        state.backField = genBackMatrix(width, height, minesCount, [y, x]);
+        state.backField = genBackMatrix(width, height, state.minesCountOrigin, [y, x]);
         state.timerStartedAt = state.currentTime = +new Date();
       }
       if (state.backField[y][x] === "mine") {
@@ -239,7 +240,7 @@ const fieldSlice = createSlice({
       } else {
         openFieldCell(state, y, x);
       }
-      if (state.closedCellCount === minesCount) {
+      if (state.closedCellCount === state.minesCountOrigin) {
         state.isWin = true;
         state.smileType = SmileType.win;
       }
@@ -262,6 +263,22 @@ const fieldSlice = createSlice({
       state.timerStartedAt = 0;
       state.currentTime = 0;
       state.closedCellCount = action.payload.width * action.payload.height
+      /*
+      smileType: SmileType.default,
+      isSmileClicked: false,
+      frontField: genFrontMatrix(16, 16),
+      backField: [],
+      isLost: false,
+      isWin: false,
+      timerStartedAt: 0,
+      currentTime: 0,
+      closedCellCount: 256,
+      minesCountOrigin: 40,
+      difficulty: {
+        width: 16,
+        height: 16,
+        minesCount: 40,
+      },*/
     },
   },
 });
